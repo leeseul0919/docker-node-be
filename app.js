@@ -21,10 +21,31 @@ wss.on('connection', function connection(ws) {
   });
 });
 
+async function watchCollectionChanges() {
+  await client.connect();
+  const db = client.db(DATABASE_NAME);
+  const collection = db.collection(COLLECTION_NAME);
+
+  const changeStream = collection.watch();
+
+  changeStream.on('change', (changeEvent) => {
+    console.log("Change detected in collection:", changeEvent);
+
+    // 클라이언트에게 메시지 전송
+    const message = JSON.stringify(changeEvent);
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  });
+}
+
 app.get('/', (req, res) => {
   res.send('Hello, Cloudtype!')
 })
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Example app listening on port ${port}`)
+  await watchCollectionChanges();
 })
