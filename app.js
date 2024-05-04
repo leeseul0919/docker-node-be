@@ -47,5 +47,6 @@ app.get('/', (req, res) => {
 
 app.listen(port, async () => {
   console.log(`Example app listening on port ${port}`)
+  console.log('start')
   await watchCollectionChanges();
 })
