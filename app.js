@@ -57,13 +57,7 @@ async function watchCollectionChanges() {
             };
         }
 
-        // 클라이언트에게 메시지 전송
-        const message = JSON.stringify(dataToSend);
-        wss.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
+        console.log(changeEvent.operationType)
     });
 }
 
