@@ -16,6 +16,7 @@ MongoClient.connect(DB_URL, function(err,client){
     if(err) return console.log(err);
     db = client.db('test');
     console.log('mongodb connect')
+    res.send('mongodb hi');
     watchCollectionChanges();
 })
 
