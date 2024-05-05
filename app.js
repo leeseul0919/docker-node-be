@@ -29,6 +29,7 @@ async function watchCollectionChanges() {
   const changeStream = collection.watch();
 
   changeStream.on('change', (changeEvent) => {
+    res.send('change')
     console.log("Change detected in collection:", changeEvent);
 
     let dataToSend;
