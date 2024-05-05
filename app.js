@@ -56,7 +56,7 @@ async function watchCollectionChanges() {
     });
 }
 
-app.listen(port, () => {
+app.listen(port || 8080, () => {
     console.log(`Example app listening on port ${port}`)
     console.log('start')
 });
