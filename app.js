@@ -1,7 +1,6 @@
 const express = require('express')
 const http = require('http');
 const WebSocket = require('ws');
-const { MongoClient } = require('mongodb');
 
 const app = express()
 const server = http.createServer(app);
@@ -12,16 +11,18 @@ const MongoClient = require('mongodb').MongoClient;
 var db;
 const DB_URL = "mongodb://capstone:20211275@atlas-sql-662e8edb701bc6704f5f31ae-oj1se.a.query.mongodb.net/test?ssl=true&authSource=admin"
 
-MongoClient.connect(DB_URL, function(err,client){
+MongoClient.connect(DB_URL, function(err, client) {
     if(err) return console.log(err);
     db = client.db('test');
-    console.log('mongodb connect')
-    res.send('mongodb hi');
+    console.log('mongodb connect');
     watchCollectionChanges();
-})
+    app.get('/', (req, res) => {
+        res.send('Hello, Cloudtype! MongoDB connected!');
+    });
+});
 
 async function watchCollectionChanges() {
-  const collection = db.collection(COLLECTION_NAME);
+    const collection = db.collection(COLLECTION_NAME);
     const changeStream = collection.watch();
 
     changeStream.on('change', (changeEvent) => {
@@ -55,11 +56,7 @@ async function watchCollectionChanges() {
     });
 }
 
-app.get('/', (req, res) => {
-  res.send('Hello, Cloudtype!')
-})
-
-app.listen(port, async () => {
-  console.log(`Example app listening on port ${port}`)
-  console.log('start')
-})
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+    console.log('start')
+});
