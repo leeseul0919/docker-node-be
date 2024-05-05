@@ -9,7 +9,7 @@ const port = 3000
 
 const MongoClient = require('mongodb').MongoClient;
 var db;
-const DB_URL = "mongodb://capstone:20211275@atlas-sql-662e8edb701bc6704f5f31ae-oj1se.a.query.mongodb.net/test?ssl=true&authSource=admin"
+const DB_URL = "mongodb+srv://capstone:20211275@cluster0.ynjxsbf.mongodb.net/"
 
 MongoClient.connect(DB_URL, function(err, client) {
     if(err) return console.log(err);
