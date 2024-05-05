@@ -1,29 +1,40 @@
-const express = require('express')
+const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const mongoose = require('mongoose');
 
-const app = express()
+const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-const port = 3000
+const port = 3000;
 
-const MongoClient = require('mongodb').MongoClient;
-var db;
-const DB_URL = "mongodb+srv://capstone:20211275@cluster0.ynjxsbf.mongodb.net/"
+// MongoDB 연결 설정
+const DB_URL = "mongodb+srv://capstone:20211275@cluster0.ynjxsbf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log('MongoDB connected');
+        watchCollectionChanges();
+    })
+    .catch(err => console.error('Failed to connect to MongoDB:', err));
 
-MongoClient.connect(DB_URL, function(err, client) {
-    if(err) return console.log(err);
-    db = client.db('test');
-    console.log('mongodb connect');
-    //watchCollectionChanges();
+// MongoDB 스키마 정의
+const Schema = mongoose.Schema;
+const obstacleSchema = new Schema({
+    obs_id: Number,
+    start_x: Number,
+    start_z: Number,
+    end_x: Number,
+    end_z: Number
 });
+const Obstacle = mongoose.model('Obstacle', obstacleSchema);
 
+// 컬렉션 모니터링 및 WebSocket 전송
 async function watchCollectionChanges() {
     app.get('/', (req, res) => {
         res.send('Hello, Cloudtype! MongoDB connected!');
     });
-    const collection = db.collection(COLLECTION_NAME);
-    const changeStream = collection.watch();
+
+    const changeStream = Obstacle.watch();
 
     changeStream.on('change', (changeEvent) => {
         console.log("Change detected in collection:", changeEvent);
@@ -56,7 +67,7 @@ async function watchCollectionChanges() {
     });
 }
 
-app.listen(port || 8080, () => {
-    console.log(`Example app listening on port ${port}`)
-    console.log('start')
+server.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+    console.log('start');
 });
