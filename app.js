@@ -18,7 +18,7 @@ MongoClient.connect(DB_URL, function(err, client) {
     app.get('/', (req, res) => {
         res.send('Hello, Cloudtype! MongoDB connected!');
     });
-    watchCollectionChanges();
+    //watchCollectionChanges();
 });
 
 async function watchCollectionChanges() {
