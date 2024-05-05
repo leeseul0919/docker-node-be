@@ -4,6 +4,9 @@ WORKDIR /app
 COPY package*.json ./ 
 RUN npm ci --only=production
 
+# "ws" 모듈을 설치합니다.
+RUN npm install ws
+
 ENV NODE_ENV production
 
 COPY . .
