@@ -31,8 +31,26 @@ async function watchCollectionChanges() {
   changeStream.on('change', (changeEvent) => {
     console.log("Change detected in collection:", changeEvent);
 
+    let dataToSend;
+
+    if (changeEvent.operationType === "insert") {
+      dataToSend = {
+        st: 1,
+        obs_id: changeEvent.fullDocument.obs_id,
+        start_x: changeEvent.fullDocument.start_x,
+        start_z: changeEvent.fullDocument.start_z,
+        end_x: changeEvent.fullDocument.end_x,
+        end_z: changeEvent.fullDocument.end_z
+      };
+    } else if (changeEvent.operationType === "delete") {
+      dataToSend = {
+        st: 2,
+        obs_id: changeEvent.documentKey.obs_id
+      };
+    }
+
     // 클라이언트에게 메시지 전송
-    const message = JSON.stringify(changeEvent);
+    const message = JSON.stringify(dataToSend);
     wss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
