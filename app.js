@@ -15,10 +15,10 @@ MongoClient.connect(DB_URL, function(err, client) {
     if(err) return console.log(err);
     db = client.db('test');
     console.log('mongodb connect');
-    watchCollectionChanges();
     app.get('/', (req, res) => {
         res.send('Hello, Cloudtype! MongoDB connected!');
     });
+    watchCollectionChanges();
 });
 
 async function watchCollectionChanges() {
