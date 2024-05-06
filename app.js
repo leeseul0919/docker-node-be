@@ -68,7 +68,9 @@ async function watchCollectionChanges() {
         
     });
 }
-
+wss.on('connection', (ws) => {
+        console.log('Client connected!');
+    });
 server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
     console.log('start');
