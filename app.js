@@ -9,7 +9,7 @@ const wss = new WebSocket.Server({ server });
 const port = 3000;
 
 // MongoDB 연결 설정
-const DB_URL = "mongodb+srv://OS:MZWl4yS6ylx53ouQ@os.xcm3kqz.mongodb.net/?retryWrites=true&w=majority&appName=OS";
+const DB_URL = "mongodb+srv://capstone:20211275@cluster0.ynjxsbf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('MongoDB connected');
