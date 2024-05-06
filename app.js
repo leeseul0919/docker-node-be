@@ -82,7 +82,7 @@ wss.on('connection', (ws) => {
     console.log('Client connected!');
 });
 // 클라이언트로부터 메시지를 받았을 때 처리
-ws.on('message', async (message) => {
+wss.on('message', async (message) => {
     console.log('Received message from client:', message);
 
     try {
@@ -91,20 +91,26 @@ ws.on('message', async (message) => {
 
         // nickname과 password 추출
         const { nickname, password } = data;
-
-        // MongoDB에 새로운 document 생성 및 저장
-        const newUser = new User({
-            ID: nickname,
-            Password: password,
-            Guide_checksum: 0,
-            Current_position_x: 0,
-            Current_position_y: 0,
-            Destination_ID: -1,
-            Manager_check: 0
-        });
-        await newUser.save();
-
-        console.log('Data saved to MongoDB:', newUser);
+        const existingUser = await User.findOne({ ID: nickname });
+        if (existingUser) {
+            wss.send(2);
+        }
+        else {
+            const newUser = new User({
+                ID: nickname,
+                Password: password,
+                Guide_checksum: 0,
+                Current_position_x: 0,
+                Current_position_y: 0,
+                Destination_ID: -1,
+                Manager_check: 0
+            });
+            await newUser.save();
+    
+            console.log('Data saved to MongoDB:', newUser);
+            wss.send(1);
+        }
+        
     } catch (error) {
         console.error('Error parsing message or saving data to MongoDB:', error);
     }
