@@ -26,7 +26,17 @@ const obstacleSchema = new Schema({
     end_x: Number,
     end_z: Number
 });
+const userSchema = new Schema({
+    ID: String,
+    Password: String,
+    Guide_checksum: Number,
+    Current_position_x: Number,
+    Current_position_y: Number,
+    Destination_ID: Number,
+    Manager_check: Number
+});
 const Obstacle = mongoose.model('Obstacle', obstacleSchema);
+const User = mongoose.model('user', userSchema);
 
 // 컬렉션 모니터링 및 WebSocket 전송
 async function watchCollectionChanges() {
@@ -70,10 +80,36 @@ async function watchCollectionChanges() {
 }
 wss.on('connection', (ws) => {
     console.log('Client connected!');
-    // 클라이언트로부터 메시지를 받았을 때 처리
-    ws.on('message', (message) => {
-        console.log('Received message from client:', message);
 });
+// 클라이언트로부터 메시지를 받았을 때 처리
+ws.on('message', async (message) => {
+    console.log('Received message from client:', message);
+
+    try {
+        // JSON 형식의 메시지 파싱
+        const data = JSON.parse(message);
+
+        // nickname과 password 추출
+        const { nickname, password } = data;
+
+        // MongoDB에 새로운 document 생성 및 저장
+        const newUser = new User({
+            ID: nickname,
+            Password: password,
+            Guide_checksum: 0,
+            Current_position_x: 0,
+            Current_position_y: 0,
+            Destination_ID: -1,
+            Manager_check: 0
+        });
+        await newUser.save();
+
+        console.log('Data saved to MongoDB:', newUser);
+    } catch (error) {
+        console.error('Error parsing message or saving data to MongoDB:', error);
+    }
+});
+
 server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
     console.log('start');
