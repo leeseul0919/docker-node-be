@@ -69,8 +69,11 @@ async function watchCollectionChanges() {
     });
 }
 wss.on('connection', (ws) => {
-        console.log('Client connected!');
-    });
+    console.log('Client connected!');
+    // 클라이언트로부터 메시지를 받았을 때 처리
+    ws.on('message', (message) => {
+        console.log('Received message from client:', message);
+});
 server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
     console.log('start');
