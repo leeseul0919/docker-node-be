@@ -82,7 +82,7 @@ wss.on('connection', (ws) => {
     console.log('Client connected!');
 });
 // 클라이언트로부터 메시지를 받았을 때 처리
-wss.on('message', async (message) => {
+ws.on('message', async (message) => {
     console.log('Received message from client:', message);
 
     try {
@@ -93,7 +93,7 @@ wss.on('message', async (message) => {
         const { nickname, password } = data;
         const existingUser = await User.findOne({ ID: nickname });
         if (existingUser) {
-            wss.send(2);
+            ws.send(2);
         }
         else {
             const newUser = new User({
@@ -108,7 +108,7 @@ wss.on('message', async (message) => {
             await newUser.save();
     
             console.log('Data saved to MongoDB:', newUser);
-            wss.send(1);
+            ws.send(1);
         }
         
     } catch (error) {
