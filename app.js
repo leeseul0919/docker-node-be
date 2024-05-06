@@ -80,40 +80,41 @@ async function watchCollectionChanges() {
 }
 wss.on('connection', (ws) => {
     console.log('Client connected!');
-});
-// 클라이언트로부터 메시지를 받았을 때 처리
-ws.on('message', async (message) => {
-    console.log('Received message from client:', message);
 
-    try {
-        // JSON 형식의 메시지 파싱
-        const data = JSON.parse(message);
+    // 클라이언트로부터 메시지를 받았을 때 처리
+    ws.on('message', async (message) => {
+        console.log('Received message from client:', message);
 
-        // nickname과 password 추출
-        const { nickname, password } = data;
-        const existingUser = await User.findOne({ ID: nickname });
-        if (existingUser) {
-            ws.send(2);
-        }
-        else {
-            const newUser = new User({
-                ID: nickname,
-                Password: password,
-                Guide_checksum: 0,
-                Current_position_x: 0,
-                Current_position_y: 0,
-                Destination_ID: -1,
-                Manager_check: 0
-            });
-            await newUser.save();
-    
-            console.log('Data saved to MongoDB:', newUser);
-            ws.send(1);
-        }
+        try {
+            // JSON 형식의 메시지 파싱
+            const data = JSON.parse(message);
+
+            // nickname과 password 추출
+            const { nickname, password } = data;
+            const existingUser = await User.findOne({ ID: nickname });
+            if (existingUser) {
+                ws.send('2');
+            }
+            else {
+                const newUser = new User({
+                    ID: nickname,
+                    Password: password,
+                    Guide_checksum: 0,
+                    Current_position_x: 0,
+                    Current_position_y: 0,
+                    Destination_ID: -1,
+                    Manager_check: 0
+                });
+                await newUser.save();
         
-    } catch (error) {
-        console.error('Error parsing message or saving data to MongoDB:', error);
-    }
+                console.log('Data saved to MongoDB:', newUser);
+                ws.send('1');
+            }
+            
+        } catch (error) {
+            console.error('Error parsing message or saving data to MongoDB:', error);
+        }
+    });
 });
 
 server.listen(port, () => {
