@@ -126,9 +126,9 @@ wss.on('connection', (ws) => {
                     console.log('obstacle data save');
             }
             else if(data.progress_st === "3") {
-                const { obs_id } = data;
+                const { obs_id, start_x, start_z, end_x, end_z } = data;
                 console.log('obstacle delete data receive');
-                const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id });
+                const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id, start_x: start_x, start_z: start_z, end_x: end_x, end_z: end_z });
                 if (deletedObstacle) {
                     console.log('Obstacle deleted:', deletedObstacle);
                 }
