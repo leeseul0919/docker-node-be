@@ -134,6 +134,7 @@ wss.on('connection', (ws) => {
                             end_z: end_z
                         };
                         const message = JSON.stringify(deletedata_send);
+                        console.log(message);
                         wss.clients.forEach(client => {
                             if (client.readyState === WebSocket.OPEN) {
                                 client.send(message);
