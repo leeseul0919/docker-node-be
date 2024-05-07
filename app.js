@@ -133,7 +133,7 @@ wss.on('connection', (ws) => {
                         start_x: start_x,
                         start_z: start_z,
                         end_x: end_x,
-                        end_z: .end_z
+                        end_z: end_z
                     };
                     const message = JSON.stringify(deletedata_send);
                     wss.clients.forEach(client => {
