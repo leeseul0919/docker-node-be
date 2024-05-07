@@ -113,7 +113,7 @@ wss.on('connection', (ws) => {
             }
             else if (data.progress_st === "2") {
                 const { obs_id, start_x, start_z, end_x, end_z } = data;
-                console.log('obstacle data receive');
+                console.log('obstacle create data receive');
                 const newObstacle = new Obstacle({
                         obs_id: obs_id,
                         start_x: start_x,
@@ -124,6 +124,18 @@ wss.on('connection', (ws) => {
                     await newObstacle.save();
             
                     console.log('obstacle data save');
+            }
+            else if(data.progress_st === "3") {
+                const { obs_id } = data;
+                console.log('obstacle delete data receive');
+                const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id });
+                if (deletedObstacle) {
+                    console.log('Obstacle deleted:', deletedObstacle);
+                }
+                else {
+                    console.log('Obstacle not found:', obs_id);
+                }
+                console.log('obstacle data delete');
             }
         } catch (error) {
             console.error('Error parsing message or saving data to MongoDB:', error);
