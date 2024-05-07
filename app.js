@@ -60,11 +60,6 @@ async function watchCollectionChanges() {
                 end_x: changeEvent.fullDocument.end_x,
                 end_z: changeEvent.fullDocument.end_z
             };
-        } else if (changeEvent.operationType === "delete") {
-            dataToSend = {
-                st: 2,
-                obs_id: changeEvent.documentKey.obs_id
-            };
         }
         const message = JSON.stringify(dataToSend);
 
@@ -130,7 +125,22 @@ wss.on('connection', (ws) => {
                 console.log('obstacle delete data receive');
                 const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id, start_x: start_x, start_z: start_z, end_x: end_x, end_z: end_z });
                 if (deletedObstacle) {
+                    let deletedata_send;
                     console.log('Obstacle deleted:', deletedObstacle);
+                    deletedata_send = {
+                        st: 2,
+                        obs_id: deletedObstacle.obs_id,
+                        start_x: deletedObstacle.start_x,
+                        start_z: deletedObstacle.start_z,
+                        end_x: deletedObstacle.end_x,
+                        end_z: deletedObstacle.end_z
+                    };
+                    const message = JSON.stringify(deletedata_send);
+                    wss.clients.forEach(client => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(message);
+                        }
+                    });
                 }
                 else {
                     console.log('Obstacle not found:', obs_id);
