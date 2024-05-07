@@ -112,6 +112,7 @@ wss.on('connection', (ws) => {
             }
             else if (data.progress_st === 2) {
                 const { obs_id, start_x, start_z, end_x, end_z } = data;
+                concole.log('obstacle data receive');
                 const newObstacle = new Obstacle({
                         obs_id: obs_id,
                         start_x: start_x,
@@ -121,7 +122,7 @@ wss.on('connection', (ws) => {
                     });
                     await newObstacle.save();
             
-                    console.log('Data saved to MongoDB:', newObstacle);
+                    concole.log('obstacle data save');
             }
         } catch (error) {
             console.error('Error parsing message or saving data to MongoDB:', error);
