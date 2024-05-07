@@ -89,7 +89,7 @@ wss.on('connection', (ws) => {
             // JSON 형식의 메시지 파싱
             const data = JSON.parse(message);
             console.log(data.progress_st);
-            if (data.progress_st === 1) {
+            if (data.progress_st === "1") {
                 const { nickname, password } = data;
                 const existingUser = await User.findOne({ ID: nickname });
                 if (existingUser) {
@@ -111,7 +111,7 @@ wss.on('connection', (ws) => {
                     ws.send('1');
                 }
             }
-            else if (data.progress_st === 2) {
+            else if (data.progress_st === "2") {
                 const { obs_id, start_x, start_z, end_x, end_z } = data;
                 console.log('obstacle data receive');
                 const newObstacle = new Obstacle({
