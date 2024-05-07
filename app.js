@@ -129,11 +129,11 @@ wss.on('connection', (ws) => {
                     console.log('Obstacle deleted:', deletedObstacle);
                     deletedata_send = {
                         st: 2,
-                        obs_id: deletedObstacle.obs_id,
-                        start_x: deletedObstacle.start_x,
-                        start_z: deletedObstacle.start_z,
-                        end_x: deletedObstacle.end_x,
-                        end_z: deletedObstacle.end_z
+                        obs_id: obs_id,
+                        start_x: start_x,
+                        start_z: start_z,
+                        end_x: end_x,
+                        end_z: .end_z
                     };
                     const message = JSON.stringify(deletedata_send);
                     wss.clients.forEach(client => {
