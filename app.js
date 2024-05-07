@@ -88,29 +88,41 @@ wss.on('connection', (ws) => {
         try {
             // JSON 형식의 메시지 파싱
             const data = JSON.parse(message);
-
-            // nickname과 password 추출
-            const { nickname, password } = data;
-            const existingUser = await User.findOne({ ID: nickname });
-            if (existingUser) {
-                ws.send('2');
-            }
-            else {
-                const newUser = new User({
-                    ID: nickname,
-                    Password: password,
-                    Guide_checksum: 0,
-                    Current_position_x: 0,
-                    Current_position_y: 0,
-                    Destination_ID: -1,
-                    Manager_check: 0
-                });
-                await newUser.save();
-        
-                console.log('Data saved to MongoDB:', newUser);
-                ws.send('1');
-            }
+            if (data.progress_st === 1) {
+                const { nickname, password } = data;
+                const existingUser = await User.findOne({ ID: nickname });
+                if (existingUser) {
+                    ws.send('2');
+                }
+                else {
+                    const newUser = new User({
+                        ID: nickname,
+                        Password: password,
+                        Guide_checksum: 0,
+                        Current_position_x: 0,
+                        Current_position_y: 0,
+                        Destination_ID: -1,
+                        Manager_check: 0
+                    });
+                    await newUser.save();
             
+                    console.log('Data saved to MongoDB:', newUser);
+                    ws.send('1');
+                }
+            }
+            else if (data.progress_st === 2) {
+                const { obs_id, start_x, start_z, end_x, end_z } = data;
+                const newObstacle = new Obstacle({
+                        obs_id: obs_id,
+                        start_x: start_x,
+                        start_z: start_z,
+                        end_x: end_x,
+                        end_z: end_z,
+                    });
+                    await newObstacle.save();
+            
+                    console.log('Data saved to MongoDB:', newObstacle);
+            }
         } catch (error) {
             console.error('Error parsing message or saving data to MongoDB:', error);
         }
