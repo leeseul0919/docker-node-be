@@ -88,6 +88,7 @@ wss.on('connection', (ws) => {
         try {
             // JSON 형식의 메시지 파싱
             const data = JSON.parse(message);
+            console.log(data.progress_st);
             if (data.progress_st === 1) {
                 const { nickname, password } = data;
                 const existingUser = await User.findOne({ ID: nickname });
