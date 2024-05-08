@@ -121,11 +121,8 @@ wss.on('connection', (ws) => {
                     console.log('obstacle data save');
                 }
                 else if(data.progress_st === "3") {
-                    const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id, start_x: start_x, start_z: start_z, end_x: end_x, end_z: end_z });
-                    if (deletedObstacle) {
-                        let deletedata_send;
-                        console.log('Obstacle deleted:', deletedObstacle);
-                        deletedata_send = {
+                    let deletedata_send;
+                    deletedata_send = {
                             st: 2,
                             obs_id: obs_id,
                             start_x: start_x,
@@ -133,7 +130,10 @@ wss.on('connection', (ws) => {
                             end_x: end_x,
                             end_z: end_z
                         };
-                        const message = JSON.stringify(deletedata_send);
+                    const message = JSON.stringify(deletedata_send);
+                    const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id, start_x: start_x, start_z: start_z, end_x: end_x, end_z: end_z });
+                    if (deletedObstacle) {
+                        console.log('Obstacle deleted:', deletedObstacle);
                         wss.clients.forEach(client => {
                             if (client.readyState === WebSocket.OPEN) {
                                 client.send(message);
