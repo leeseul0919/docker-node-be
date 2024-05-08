@@ -60,17 +60,14 @@ async function watchCollectionChanges() {
                 end_x: changeEvent.fullDocument.end_x,
                 end_z: changeEvent.fullDocument.end_z
             };
+            const message = JSON.stringify(dataToSend);
+            wss.clients.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(message);
+                }
+            });
+            console.log(changeEvent.operationType)
         }
-        const message = JSON.stringify(dataToSend);
-
-        // 연결된 모든 클라이언트에게 메시지 전송
-        wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
-        console.log(changeEvent.operationType)
-        
     });
 }
 wss.on('connection', (ws) => {
