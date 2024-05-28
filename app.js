@@ -103,6 +103,23 @@ wss.on('connection', (ws) => {
                     ws.send('1');
                 }
             }
+            else if (data.progress_st === "4") {
+                const data = JSON.parse(message);
+                console.log(data.progress_st);
+                const { nickname, password } = data;
+                const isexistuser = await User.findOne({ ID: nickname, Password: password });
+                if(isexistuser) {
+                    if(isexistuser.Manager_check==0) {
+                        ws.send('3');
+                    }
+                    else {
+                        ws.send('4');
+                    }
+                }
+                else {
+                    ws.send('5');
+                }
+            }
             else {
                 const { obs_id, start_x, start_z, end_x, end_z } = data;
                 console.log('obstacle data receive');
