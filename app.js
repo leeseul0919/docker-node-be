@@ -21,6 +21,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 const Schema = mongoose.Schema;
 const obstacleSchema = new Schema({
     obs_id: Number,
+    floor: Number,
     start_x: Number,
     start_z: Number,
     end_x: Number,
@@ -55,6 +56,7 @@ async function watchCollectionChanges() {
             dataToSend = {
                 st: 1,
                 obs_id: changeEvent.fullDocument.obs_id,
+                floor: changeEvent.fullDocument.floor,
                 start_x: changeEvent.fullDocument.start_x,
                 start_z: changeEvent.fullDocument.start_z,
                 end_x: changeEvent.fullDocument.end_x,
@@ -121,10 +123,11 @@ wss.on('connection', (ws) => {
                 }
             }
             else {
-                const { obs_id, start_x, start_z, end_x, end_z } = data;
+                const { obs_id, floor, start_x, start_z, end_x, end_z } = data;
                 console.log('obstacle data receive');
                 const newObstacle = new Obstacle({
                         obs_id: obs_id,
+                        floor: floor,
                         start_x: start_x,
                         start_z: start_z,
                         end_x: end_x,
@@ -139,13 +142,14 @@ wss.on('connection', (ws) => {
                     deletedata_send = {
                             st: 2,
                             obs_id: obs_id,
+                            floor: floor,
                             start_x: start_x,
                             start_z: start_z,
                             end_x: end_x,
                             end_z: end_z
                         };
                     const message = JSON.stringify(deletedata_send);
-                    const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id, start_x: start_x, start_z: start_z, end_x: end_x, end_z: end_z });
+                    const deletedObstacle = await Obstacle.findOneAndDelete({ obs_id: obs_id, floor: floor, start_x: start_x, start_z: start_z, end_x: end_x, end_z: end_z });
                     if (deletedObstacle) {
                         console.log('Obstacle deleted:', deletedObstacle);
                         wss.clients.forEach(client => {
